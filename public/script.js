@@ -52,12 +52,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const paginationControls = document.getElementById('paginationControls');
         const loadingDiv = document.getElementById('loading');
 
+        // Animacion de carga
+
+        function animateDots() {
+            const dots = document.getElementById("dots");
+            let count = 0;
+            setInterval(() => {
+                count = (count + 1) % 4;
+                dots.innerHTML = ".".repeat(count);
+            }, 500);
+        }
+
+
         // Mostrar spinner de carga
         loadingDiv.style.display = 'block';
+
+
         productsContainer.innerHTML = ''; // Limpiar contenedor
         paginationControls.classList.add('hidden'); // Ocultar controles de paginación
 
         try {
+
+            animateDots();
             const response = await fetch('/scrape', {
                 method: 'POST',
                 headers: {

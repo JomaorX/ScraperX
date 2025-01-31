@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraper de Productos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="./imagenes/scraperX-pequeño.ico">
+</head>
+<body>
+
+<main>
+    <header>
+        <nav>
+            <img src="./imagenes/scraperX-medio.webp" alt="icono">
+            <ul>
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#about">¿Qué es?</a></li>
+                <li><a href="#contact">Contacto</a></li>
+                <li id="toggleForm"><a href="#Buscar">➕ Mostrar formulario</a></li>
+            </ul>
+            <button id="darkModeToggle">🌙 Modo Oscuro</button>
+        </nav>
+    </header>
+<div class="sections">
+    
+    <section id="about">
+        <h2>¿Qué es hace esta web?</h2>
+        <p>Esta herramienta permite extraer información de productos desde cualquier página web. 
+           Solo necesitas ingresar la URL y las clases de los elementos que contienen la información.</p>
+        <p>Ideal para recopilar datos de tiendas en línea sin esfuerzo.</p>
+    </section>
+
+    <section id="home">
+        <div id="formContainer" class="hidden">
+            <form id="scraperForm">
+                <button id="cerrar" type="button">X</button>
+                <input type="text" id="url" placeholder="Introduce la URL" required>
+                <input type="text" id="containerClass" placeholder="Clase del contenedor de producto" required>
+                <input type="text" id="titleClass" placeholder="Clase del título" required>
+                <input type="text" id="priceClass" placeholder="Clase del precio" required>
+                <input type="text" id="imageClass" placeholder="Clase de la imagen" required>
+                <button type="submit">Scrapear</button>
+            </form>
+        </div>       
+        <h1>Productos Obtenidos</h1>
+        <div id="loading" style="display: none;">
+            <p>Cargando productos...</p>
+        </div>
+        <div id="productsContainer" class="results"></div>
+        <div id="paginationControls" class="hidden">
+            <button id="prevPage">Anterior</button>
+            <span id="pageInfo">Página 1 de 1</span>
+            <button id="nextPage">Siguiente</button>
+        </div>
+    </section>
+
+
+
+    <section id="contact">
+        <div class="contact-container">
+            <h2>📩 Contáctanos</h2>
+            <p>Déjanos tu mensaje y te responderemos lo antes posible.</p>
+            <form id="contactForm">
+                <div class="input-group">
+                    <label for="name">👤 Nombre</label>
+                    <input type="text" id="name" placeholder="Tu nombre" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">📧 Email</label>
+                    <input type="email" id="email" placeholder="Tu correo electrónico" required>
+                </div>
+                <div class="input-group">
+                    <label for="message">💬 Mensaje</label>
+                    <textarea id="message" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                </div>
+                <button type="submit">Enviar Mensaje</button>
+            </form>
+        </div>
+    </section>
+    
+</div>
+
+</main>
+    <footer>
+        <p>&copy; 2025 Scraper de Productos. Todos los derechos reservados.</p>
+        <a href="https://github.com/JomaorX" target="_blank"><img src="imagenes/github.png" alt="logo github" title="GitHub"></p>
+        <a href="https://www.linkedin.com/in/martinez97pro/" target="_blank"><img src="imagenes/linkedin.png" alt="logo linkedin" title="Linkedin"></p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

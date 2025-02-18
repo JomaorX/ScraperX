@@ -28,14 +28,14 @@ body, h1, h2, p, ul, li, form, input, button {
     font-family: Arial, sans-serif;
 }
 h1{
-    text-align: center;
+
     margin-bottom: 20px;
-    padding: 10px;
-    background-color: var(--verde-hoja);
-    border-radius: 10px;
-    width:max-content;
-    color: var(--gris-oscuro);
+    padding: 10px;  
+    background-color: #3a7d44;
+    color: #fff;
+    border-radius: 8px;
 }
+
 
 body {
     background: var(--fondo);

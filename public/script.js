@@ -24,7 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
             toggleButton.textContent = "🌙 Modo Oscuro";
         }
     });
+    //Rellenar ejemplo
+    const boton2 = document.getElementById("boton2");
+    function rellenar(){
+        document.getElementById('url').value = "https://www.mantequeriaslatienda.com/";
+        document.getElementById('containerClass').value = "product-item";
+        document.getElementById('titleClass').value = "product-item-link";
+        document.getElementById('priceClass').value = "price-box";
+        document.getElementById('imageClass').value = "product-image-photo";
 
+    }
+    boton2.addEventListener("click",rellenar);
     // Mostrar/Ocultar Formulario
     const toggleForm = document.getElementById("toggleForm");
     const formContainer = document.getElementById("formContainer");
@@ -175,4 +185,151 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePaginationControls();
         }
     });
+
+    async function obtenerNoticiasDesdeRSS(url) {
+        try {
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+            const respuesta = await fetch(proxyUrl);
+            const data = await respuesta.json();
+    
+            if (!data.contents) {
+                throw new Error("No se pudo obtener el contenido RSS.");
+            }
+    
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(data.contents, "text/xml");
+    
+            const items = xml.querySelectorAll("item");
+            const noticias = [];
+    
+            items.forEach(item => {
+                const titulo = item.querySelector("title")?.textContent || "Sin título";
+                const descripcion = item.querySelector("description")?.textContent || "Sin descripción";
+                
+                // Intentamos obtener la imagen de <media:content>
+                let imagen = "";
+                const mediaContent = item.getElementsByTagName("media:content");
+                if (mediaContent.length > 0) {
+                    imagen = mediaContent[0].getAttribute("url") || "";
+                }
+    
+                noticias.push({ titulo, imagen, descripcion });
+            });
+    
+            return noticias;
+        } catch (error) {
+            console.error("Error al obtener el RSS:", error);
+            return [];
+        }
+    }
+    
+    function mostrarNoticias(noticias) {
+        const contenedor = document.getElementById("rssNoticias");
+        if (!contenedor) {
+            console.error("Error: No se encontró el elemento con ID 'rssNoticias'");
+            return;
+        }
+    
+        contenedor.innerHTML = ""; // Limpiar el contenedor antes de añadir noticias
+    
+        let contador = 0;
+    
+        noticias.forEach(noticia => {
+            // Filtrar noticias que no tengan título, imagen o descripción
+            if (!noticia.titulo || !noticia.imagen || !noticia.descripcion) return;
+    
+            // Limitar a 10 noticias
+            if (contador >= 10) return;
+    
+            const noticiaDiv = document.createElement("div");
+            noticiaDiv.classList.add("noticia");
+    
+            noticiaDiv.innerHTML = `
+                <h2>${noticia.titulo}</h2>
+                <img src="${noticia.imagen}" alt="Imagen de noticia">
+                <p>${noticia.descripcion}</p>
+            `;
+    
+            contenedor.appendChild(noticiaDiv);
+            contador++;
+        });
+    }
+    
+    
+    
+    // URL del RSS
+    const urlRSS = "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada";
+    obtenerNoticiasDesdeRSS(urlRSS).then(mostrarNoticias);
+    
+    
+    
+    // Función para cargar y mostrar las noticias desde el feed ATOM
+async function cargarNoticias() {
+    const feedUrl = 'https://www.abc.es/rss/atom/motor/';
+    const container = document.getElementById('atomNoticias');
+
+    try {
+        // Usar un proxy para evitar problemas de CORS
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
+        const response = await fetch(proxyUrl);
+
+        if (!response.ok) {
+            throw new Error('No se pudo obtener el feed ATOM.');
+        }
+
+        const data = await response.json();
+
+        // Verificar si el contenido está vacío o inválido
+        if (!data.contents) {
+            throw new Error('El feed ATOM está vacío o no es válido.');
+        }
+
+        // Parsear el contenido XML
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, 'application/xml');
+
+        // Verificar si hay errores en el XML
+        const parseError = xml.getElementsByTagName('parsererror');
+        if (parseError.length > 0) {
+            throw new Error('Error al analizar el feed ATOM.');
+        }
+
+        // Procesar las entradas del feed
+        const entries = xml.querySelectorAll('entry');
+        if (entries.length === 0) {
+            container.innerHTML = '<p>No hay noticias disponibles.</p>';
+            return;
+        }
+
+        let noticiasHTML = '';
+        let contador = 0;
+        entries.forEach(entry => {
+            if (contador>=10) return;
+            const title = entry.querySelector('title')?.textContent || 'Sin título';
+            const link = entry.querySelector('link[rel="alternate"]')?.getAttribute('href') || '#';
+            const summary = entry.querySelector('summary')?.textContent || 'Sin resumen';
+            const published = entry.querySelector('updated')?.textContent || 'Fecha desconocida';
+
+            noticiasHTML += `
+                <div class="noticia">
+                    <h3>${title}</h3>
+                    <p><strong>Publicado:</strong> ${new Date(published).toLocaleDateString()}</p>
+                    <p>${summary}</p>
+                    <a href="${link}" target="_blank">Leer más</a>
+                </div>
+            `;
+            contador++;
+        });
+
+        // Mostrar las noticias en el contenedor
+        container.innerHTML = noticiasHTML;
+    } catch (error) {
+        console.error('Error:', error);
+        container.innerHTML = '<p>Error al cargar las noticias. Por favor, inténtalo más tarde.</p>';
+    }
+}
+
+// Cargar las noticias cuando se cargue la página
+window.addEventListener('DOMContentLoaded', cargarNoticias);
+    
 });
